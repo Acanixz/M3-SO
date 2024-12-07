@@ -4,25 +4,29 @@
 #include <error.h>
 #include <err.h>
 
-/* calculate FAT address */
+/* Calcula o endereço inicial da FAT */
 uint32_t bpb_faddress(struct fat_bpb *bpb)
 {
+	// Sabendo que área reservada contém [bytes_p_sect] bytes, multiplica por [reserved_sect] para obter o endereço
+	// inicial da FAT
 	return bpb->reserved_sect * bpb->bytes_p_sect;
 }
 
-/* calculate FAT root address */
+/* Calcula o endereço do diretório raiz */
 uint32_t bpb_froot_addr(struct fat_bpb *bpb)
 {
+	// Sabendo o endereço inicial da FAT, multiplica pelo numero de copias redundates da FAT e pelo numero de setores e bytes por setor
 	return bpb_faddress(bpb) + bpb->n_fat * bpb->sect_per_fat * bpb->bytes_p_sect;
 }
 
-/* calculate data address */
+/* Calculo do endereço inicial dos dados */
 uint32_t bpb_fdata_addr(struct fat_bpb *bpb)
 {
+	// Sabendo que cada entrada do diretório raiz ocupa 32 bytes, multiplica pelo numero de entradas possíveis
 	return bpb_froot_addr(bpb) + bpb->possible_rentries * 32;
 }
 
-/* calculate data sector count */
+/* Calcula a quantidade de setores/blocos de dados (Um setor contém muitos bytes de um arquivo até um limite) */
 uint32_t bpb_fdata_sector_count(struct fat_bpb *bpb)
 {
 	return bpb->large_n_sects - bpb_fdata_addr(bpb) / bpb->bytes_p_sect;
@@ -33,7 +37,7 @@ static uint32_t bpb_fdata_sector_count_s(struct fat_bpb* bpb)
 	return bpb->snumber_sect - bpb_fdata_addr(bpb) / bpb->bytes_p_sect;
 }
 
-/* calculate data cluster count */
+/* Calcula a quantidade de clusters de dados (Um cluster contém um ou mais setores) */
 uint32_t bpb_fdata_cluster_count(struct fat_bpb* bpb)
 {
 	uint32_t sectors = bpb_fdata_sector_count_s(bpb);
