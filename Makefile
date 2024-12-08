@@ -8,7 +8,7 @@ CARGS = -Wall -Wextra -g -O0 -I$(INCLUDE) -pedantic -std=c11
 OBJS    = $(shell find $(SOURCE) -type f -name '*.c' | sed 's/\.c*$$/\.o/; s/$(SOURCE)\//$(BUILD)\//')
 HEADERS = $(shell find $(INCLUDE) -type f -name '*.h')
 
-NAME = obese16
+NAME = obese32
 
 .PHONY: builddir
 

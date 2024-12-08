@@ -36,23 +36,38 @@ struct fat_dir {
  * Located at the first sector of the volume in the reserved region.
  * AKA as the boot sector, reserved sector or even the "0th" sector.
  */
-struct fat_bpb { /* bios Parameter block */
-	uint8_t jmp_instruction[3]; /* code to jump to the bootstrap code */
-	unsigned char oem_id[8]; /* Oem ID: name of the formatting OS */
+struct fat_bpb {
+    uint8_t jmp_instruction[3];      // Instrução de salto para o código de bootstrap
+    unsigned char oem_id[8];         // ID do OEM: nome do sistema operacional que formatou o volume
 
-	uint16_t bytes_p_sect; /* bytes per sector */
-	uint8_t sector_p_clust; /* sector per cluster */
-	uint16_t reserved_sect; /* reserved sectors */
-	uint8_t n_fat; /* number of FAT copies */
-	uint16_t possible_rentries; /* number of possible root entries */
-	uint16_t snumber_sect; /* small number of sectors */
+    uint16_t bytes_p_sect;           // Bytes por setor
+    uint8_t sector_p_clust;          // Setores por cluster
+    uint16_t reserved_sect;          // Setores reservados no início do volume
+    uint8_t n_fat;                   // Número de cópias da Tabela de Alocação de Arquivos (FAT)
+    uint16_t root_entry_count;       // Número de entradas no diretório raiz (zero em FAT32)
+    uint16_t total_sectors_16;       // Número total de setores (se zero, use total_sectors_32)
+    uint8_t media_desc;              // Descritor de mídia
+    uint16_t sect_per_fat_16;        // Setores por FAT (se zero, use sect_per_fat_32)
 
-	uint8_t media_desc; /* media descriptor */
-	uint16_t sect_per_fat; /* sector per FAT */
-	uint16_t sect_per_track; /* sector per track */
-	uint16_t number_of_heads; /* number of heads */
-	uint32_t hidden_sects; /* hidden sectors */
-	uint32_t large_n_sects; /* large number of sectors */
+    uint16_t sect_per_track;         // Setores por trilha
+    uint16_t number_of_heads;        // Número de cabeças
+    uint32_t hidden_sects;           // Setores ocultos
+    uint32_t total_sectors_32;       // Número total de setores (usado se total_sectors_16 for zero)
+    uint32_t sect_per_fat_32;        // Setores por FAT em FAT32
+
+    uint16_t ext_flags;              // Bandeiras estendidas
+    uint16_t fs_version;             // Versão do sistema de arquivos
+    uint32_t root_cluster;           // Cluster inicial do diretório raiz em FAT32
+    uint16_t fs_info;                // Setor de informações do sistema de arquivos
+    uint16_t backup_boot_sector;     // Setor de backup do setor de boot
+
+    uint8_t reserved[12];            // Reservado para uso futuro
+    uint8_t drive_number;            // Número da unidade
+    uint8_t reserved1;               // Reservado (deve ser zero)
+    uint8_t boot_signature;          // Assinatura de boot (0x29 se os próximos três campos forem válidos)
+    uint32_t volume_id;              // ID do volume (número de série)
+    unsigned char volume_label[11];  // Rótulo do volume (nome do volume)
+    unsigned char fs_type[8];        // Tipo de sistema de arquivos (ex: "FAT32")
 };
 /*
  * NOTE - Modificação
