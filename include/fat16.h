@@ -61,9 +61,9 @@ struct fat_bpb {
     uint16_t fs_info;                // Setor de informações do sistema de arquivos
     uint16_t backup_boot_sector;     // Setor de backup do setor de boot
 
-    uint8_t reserved[12];            // Reservado para uso futuro
+    uint8_t boot_file_name[12];      // Reservado (Nome do arquivo de boot)
     uint8_t drive_number;            // Número da unidade
-    uint8_t reserved1;               // Reservado (deve ser zero)
+    uint8_t flags;                   // Flags etc.
     uint8_t boot_signature;          // Assinatura de boot (0x29 se os próximos três campos forem válidos)
     uint32_t volume_id;              // ID do volume (número de série)
     unsigned char volume_label[11];  // Rótulo do volume (nome do volume)
