@@ -170,6 +170,27 @@ void rm(FILE* fp, char* filename, struct fat_bpb* bpb)
         error_at_line(EXIT_FAILURE, errno, __FILE__, __LINE__, "erro ao escrever a entrada do diretório");
     }
 
+    /* Após zerar a entrada de diretório, liberar espaço em disco */
+
+	/* Leitura da tabela FAT explicado na função cat() */
+	uint32_t fat_address    = bpb_faddress(bpb);
+	uint16_t cluster_number = dir.fdir.starting_cluster;
+	uint16_t null           = 0x0;
+	size_t   count          = 0;
+
+	/* Continua a zerar os clusters até chegar no End Of File */
+	while (cluster_number < FAT16_EOF_LO)
+	{
+		uint32_t infat_cluster_address = fat_address + cluster_number * sizeof (uint16_t);
+		read_bytes(fp, infat_cluster_address, &cluster_number, sizeof (uint16_t));
+
+		/* Setar o cluster number como NULL */
+		(void) fseek(fp, infat_cluster_address, SEEK_SET);
+		(void) fwrite(&null, sizeof (uint16_t), 1, fp);
+
+		count++;
+    }
+
     printf("Arquivo %s removido.\n", filename);
 }
 
